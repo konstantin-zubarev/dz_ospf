@@ -1,0 +1,23 @@
+---
+device: 'eth1'
+
+vlan1: '30'
+vlan1_ip: '10.10.3.1'
+vlan1_netmask: '255.255.255.252'
+vlan1_prefix: '30'
+vlan1_network: '10.10.3.0'
+vlan1_cost: '10'
+
+vlan2: '20'
+vlan2_ip: '10.10.2.2'
+vlan2_netmask: '255.255.255.252'
+vlan2_prefix: '30'
+vlan2_network: '10.10.2.0'
+vlan2_cost: '10'
+
+loop_ip: '10.0.0.3'
+loop_netmask: '255.255.255.255'
+loop_prefix: '32'
+loop_network: '10.0.0.0'
+
+default: 'default-information originate'

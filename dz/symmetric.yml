@@ -1,0 +1,23 @@
+---
+
+- name: symmetric router
+  hosts: r1
+  become: true
+
+  tasks:
+  
+    - name: Set ip ospf cost
+      lineinfile:
+        path: /etc/quagga/ospfd.conf
+        regexp: ' ip ospf cost 10'
+        insertbefore: '^interface eth1.10'
+        line: ' ip ospf cost 100'
+        firstmatch: yes
+      notify: restart ospfd
+
+  handlers:
+
+    - name: restart ospfd
+      service:
+        name: ospfd
+        state: restarted

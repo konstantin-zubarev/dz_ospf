@@ -1,0 +1,17 @@
+---
+# handlers file for roles/ospf
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted
+    
+- name: restart zebra
+  service:
+    name: zebra
+    state: restarted
+
+- name: restart ospfd
+  service:
+    name: ospfd
+    state: restarted

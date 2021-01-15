@@ -1,0 +1,22 @@
+! -*- zebra -*-
+!
+! zebra sample configuration file
+!
+! $Id: zebra.conf.sample,v 1.1 2002/12/13 20:15:30 paul Exp $
+!
+hostname {{ ansible_hostname }}
+!
+interface eth0
+ ipv6 nd suppress-ra
+!
+interface eth1
+ ipv6 nd suppress-ra
+!
+interface lo
+!
+ip forwarding
+!
+log file /var/log/quagga/zebra.log
+!
+line vty
+!

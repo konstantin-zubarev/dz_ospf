@@ -1,0 +1,14 @@
+---
+# tasks file for roles/ospf
+
+- name: Set DEFROUTE=No
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: '^DEFROUTE='
+    line: DEFROUTE="no"
+  notify: restart network
+  
+- name: start network
+  systemd:
+    name: network
+    state: restarted

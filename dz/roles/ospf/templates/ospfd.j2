@@ -1,0 +1,35 @@
+! -*- ospf -*-
+!
+! OSPFd sample configuration file
+!
+!
+!
+log stdout
+log file /var/log/quagga/ospfd.log
+!
+!
+interface eth0
+!
+interface eth1
+!
+interface {{ device }}.{{ vlan1 }}
+ ip ospf cost {{ vlan1_cost }}
+ ip ospf hello-interval 3
+ ip ospf dead-interval 10
+!
+interface {{ device }}.{{ vlan2 }}
+ ip ospf cost {{ vlan2_cost }}
+ ip ospf hello-interval 3
+ ip ospf dead-interval 10
+!
+interface lo
+!
+router ospf
+ ospf router-id {{ loop_ip }}
+ network {{ loop_ip }}/{{ loop_prefix }} area 1
+ network {{ vlan1_network }}/{{ vlan1_prefix }} area 0
+ network {{ vlan2_network }}/{{ vlan2_prefix }} area 0
+ {{ default }}
+!
+line vty
+!

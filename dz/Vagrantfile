@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+  :r1 => {
+    :box_name => "centos/7",
+    :net => [
+               {ip: '192.168.11.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "router"}
+            ]
+  },
+  :r2 => {
+    :box_name => "centos/7",
+    :net => [
+               {ip: '192.168.11.102', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "router"}
+            ]
+  },
+  :r3 => {
+    :box_name => "centos/7",
+    :net => [
+               {ip: '192.168.11.103', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "router"}
+            ]
+  }
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+      box.vm.box = boxconfig[:box_name]
+      box.vm.host_name = boxname.to_s
+
+      boxconfig[:net].each do |ipconf|
+        box.vm.network "private_network", ipconf
+      end
+      
+      box.vm.provider :virtualbox do |vb|
+        vb.name = boxname.to_s
+        vb.memory = 256
+        vb.cpus = 1
+      end
+        
+      box.vm.provision "shell", inline: <<-SHELL
+        mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+      SHELL
+      
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "ospf.yml"
+      end
+      
+    end
+  end
+end

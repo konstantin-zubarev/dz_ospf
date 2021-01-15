@@ -1,0 +1,13 @@
+---
+# tasks file for roles/ospf
+
+- name: ALL
+  include_tasks: all.yml
+  
+- name: Configuration R2
+  include_tasks: r2.yml
+  when: ansible_hostname == "r2"
+
+- name: Configuration R3
+  include_tasks: r3.yml
+  when: ansible_hostname == "r3"

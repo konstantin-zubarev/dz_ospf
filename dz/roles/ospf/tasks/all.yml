@@ -1,0 +1,75 @@
+---
+# tasks file for roles/ospf
+
+- name: Set timezone to Europe/Moscow
+  timezone:
+    name: Europe/Moscow
+
+- name: Set ip forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    reload: yes
+    
+- name: Set ip filter
+  sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: '2'
+    sysctl_set: yes
+    reload: yes
+
+- name: Device ifcfg vlan
+  template:
+    backup: true
+    owner: root
+    group: root
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: ifcfg-lo2.j2, dest: "/etc/sysconfig/network-scripts/ifcfg-lo.2" }
+    - { src: ifcfg-vlan1.j2, dest: "/etc/sysconfig/network-scripts/ifcfg-{{ device }}.{{ vlan1 }}" }
+    - { src: ifcfg-vlan2.j2, dest: "/etc/sysconfig/network-scripts/ifcfg-{{ device }}.{{ vlan2 }}" }
+  notify: restart network
+   
+- name: Install package
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - quagga
+    - tcpdump
+    - libsemanage-python
+    
+- name: Modify SELinux
+  seboolean:
+    name: zebra_write_config
+    state: yes
+    persistent: yes
+
+- name: Enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - zebra
+    - ospfd
+
+- name: 'Copy zebra config file from template'
+  template:
+    src: zebra.j2
+    dest: /etc/quagga/zebra.conf
+    owner: quagga
+    group: quagga
+    mode: 0640
+  notify: restart zebra
+
+- name: 'Copy ospfd config file from template'
+  template:
+    src: ospfd.j2
+    dest: /etc/quagga/ospfd.conf
+    owner: quagga
+    group: quaggavt
+    mode: 0660
+  notify: restart ospfd
