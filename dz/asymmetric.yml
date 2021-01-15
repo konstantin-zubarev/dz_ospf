@@ -1,7 +1,7 @@
 ---
 
-- name: asymmetric router
-  hosts: r2
+- name: symmetric router
+  hosts: r1
   become: true
 
   tasks:
@@ -12,6 +12,7 @@
         regexp: ' ip ospf cost 10'
         insertbefore: '^interface eth1.10'
         line: ' ip ospf cost 100'
+        firstmatch: yes
       notify: restart ospfd
 
   handlers:
